@@ -65,7 +65,7 @@ public class Parity2DImpl implements FECInterface {
 	//				 and need to throw an exception when errors
 	//				 are detected but cannot be corrected.
 	@Override
-	public String decode(String encodedText) {
+	public String decode(String encodedText) throws UnlocatableErrorException {
 		
 		StringBuilder sb = new StringBuilder();
 		int[] y1BitCount = new int[encodedText.length() - 1]; 
@@ -90,7 +90,7 @@ public class Parity2DImpl implements FECInterface {
 			yParityBits[i] = (tmp & 1) == 1 ? 1 : 0;
 			
 			for(int j = 0; j < 7; ++j) {
-				if((tmp & (1 << j)) != 0) {
+				if((message[i] & (1 << j)) != 0) {
 					++y1BitCount[i];
 					++x1BitCount[7 - 1 - j];
 				}
@@ -100,19 +100,19 @@ public class Parity2DImpl implements FECInterface {
 		int numErrors = 0;
 		for(int i = 0; i < encodedText.length() - 1; ++i) {
 			if(y1BitCount[i] % 2 == 0) {
-				if(yParityBits[i]  == 0) {
+				if(yParityBits[i] == 0) {
 					// TODO(mingju): there is an error, do FEC
 					++numErrors;
 				}
 			} else {
-				if(yParityBits[i]  == 1) {
+				if(yParityBits[i] == 1) {
 					// TODO(mingju): there is an error, do FEC
 					++numErrors;
 				}
 			}
 			
 			if(numErrors > 1) {
-				// TODO(mingju): throw an exception
+				throw new UnlocatableErrorException("An unlocatable error in the message is detected");
 			}
 			
 			sb.append(message[i]);

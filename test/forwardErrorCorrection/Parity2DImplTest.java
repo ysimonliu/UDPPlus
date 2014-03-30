@@ -80,7 +80,7 @@ public class Parity2DImplTest {
 	}
 	
 	@Test
-	public void testDecodedUpperCaseNoError() {
+	public void testDecodedUpperCaseNoError() throws UnlocatableErrorException {
 		
 		int H = Integer.parseInt("10010001", 2);
 		int E = Integer.parseInt("10001010", 2);
@@ -102,7 +102,7 @@ public class Parity2DImplTest {
 	}
 	
 	@Test
-	public void testDecodedLowerCaseNoError() {
+	public void testDecodedLowerCaseNoError() throws UnlocatableErrorException {
 		
 		int h = Integer.parseInt("11010000", 2);
 		int e = Integer.parseInt("11001011", 2);
@@ -124,7 +124,7 @@ public class Parity2DImplTest {
 	}
 	
 	@Test
-	public void testDecodedMixedCaseNoError() {
+	public void testDecodedMixedCaseNoError() throws UnlocatableErrorException {
 		
 		int H = Integer.parseInt("10010001", 2);
 		int E = Integer.parseInt("10001010", 2);
@@ -147,19 +147,19 @@ public class Parity2DImplTest {
 	}
 	
 	@Test
-	public void testEncodeDecodeUpperCase() {
+	public void testEncodeDecodeUpperCase() throws UnlocatableErrorException {
 		String message = "HELLO";
 		assertEquals(message, parity2D.decode(parity2D.encode(message)));
 	}
 	
 	@Test
-	public void testEncodeDecodeLowerCase() {
+	public void testEncodeDecodeLowerCase() throws UnlocatableErrorException {
 		String message = "hello";
 		assertEquals(message, parity2D.decode(parity2D.encode(message)));
 	}
 	
 	@Test
-	public void testEncodeDecodeMixedCase() {
+	public void testEncodeDecodeMixedCase() throws UnlocatableErrorException {
 		String message = "HeLlO wOrLd";
 		assertEquals(message, parity2D.decode(parity2D.encode(message)));
 	}
