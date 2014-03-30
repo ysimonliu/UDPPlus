@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="D:/School/code/UDPPlus/guice-3.0.jar"/>
-	<classpathentry kind="lib" path="D:/School/code/UDPPlus/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="lib" path="./guice-3.0.jar"/>
+	<classpathentry kind="lib" path="./mockito-all-1.9.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
