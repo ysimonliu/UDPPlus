@@ -68,6 +68,11 @@ public class Parity2DImpl implements FECInterface {
 	public String decode(String encodedText) {
 		
 		StringBuilder sb = new StringBuilder();
+		int[] y1BitCount = new int[encodedText.length() - 1]; 
+		int[] x1BitCount = new int[7];
+		int [] yParityBits = new int[encodedText.length() - 1];
+		char[] message = new char[encodedText.length() - 1];
+		
 		int last = encodedText.charAt(encodedText.length() - 1);
 		int[] xParityBits = new int[7];
 		
@@ -80,29 +85,37 @@ public class Parity2DImpl implements FECInterface {
 		}
 		
 		for(int i = 0; i < encodedText.length() - 1; ++i) {
-			
 			int tmp = encodedText.charAt(i);
-			char m = (char) (tmp >> 1); 
-			int parity = (tmp & 1) == 1 ? 1 : 0;
+			message[i] = (char) (tmp >> 1); 
+			yParityBits[i] = (tmp & 1) == 1 ? 1 : 0;
 			
-			int count = 0;
 			for(int j = 0; j < 7; ++j) {
 				if((tmp & (1 << j)) != 0) {
-					++count;
+					++y1BitCount[i];
+					++x1BitCount[7 - 1 - j];
 				}
 			}
-			
-			if(count % 2 == 0) {
-				if(parity == 0) {
+		}
+		
+		int numErrors = 0;
+		for(int i = 0; i < encodedText.length() - 1; ++i) {
+			if(y1BitCount[i] % 2 == 0) {
+				if(yParityBits[i]  == 0) {
 					// TODO(mingju): there is an error, do FEC
+					++numErrors;
 				}
 			} else {
-				if(parity == 1) {
+				if(yParityBits[i]  == 1) {
 					// TODO(mingju): there is an error, do FEC
+					++numErrors;
 				}
 			}
 			
-			sb.append(m);
+			if(numErrors > 1) {
+				// TODO(mingju): throw an exception
+			}
+			
+			sb.append(message[i]);
 		}
 		
 		return sb.toString();
