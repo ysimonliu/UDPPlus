@@ -29,8 +29,6 @@ public class Parity2DImpl implements FECInterface {
 		for(int i = 0; i < plainText.length(); ++i) {
 			
 			int tmp = plainText.charAt(i);
-			System.out.println(Integer.toBinaryString(tmp));
-			System.out.println((char)(tmp));
 			
 			int count = 0;
 			// ascii's most significant bit is zero
@@ -62,9 +60,51 @@ public class Parity2DImpl implements FECInterface {
 		return sb.toString();
 	}
 
+
+	// TODO(mingju): need to detect and correct errors
+	//				 and need to throw an exception when errors
+	//				 are detected but cannot be corrected.
 	@Override
 	public String decode(String encodedText) {
 		
-		return null;
+		StringBuilder sb = new StringBuilder();
+		int last = encodedText.charAt(encodedText.length() - 1);
+		int[] xParityBits = new int[7];
+		
+		for(int i = 0; i < xParityBits.length; ++i) {
+			if((last & (1 << i)) == 1) {
+				xParityBits[xParityBits.length - 1 - i] = 1;				
+			} else {
+				xParityBits[xParityBits.length - 1 - i] = 0;
+			}
+		}
+		
+		for(int i = 0; i < encodedText.length() - 1; ++i) {
+			
+			int tmp = encodedText.charAt(i);
+			char m = (char) (tmp >> 1); 
+			int parity = (tmp & 1) == 1 ? 1 : 0;
+			
+			int count = 0;
+			for(int j = 0; j < 7; ++j) {
+				if((tmp & (1 << j)) != 0) {
+					++count;
+				}
+			}
+			
+			if(count % 2 == 0) {
+				if(parity == 0) {
+					// TODO(mingju): there is an error, do FEC
+				}
+			} else {
+				if(parity == 1) {
+					// TODO(mingju): there is an error, do FEC
+				}
+			}
+			
+			sb.append(m);
+		}
+		
+		return sb.toString();
 	}
 }
