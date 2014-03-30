@@ -1,5 +1,5 @@
 package communication;
 
-public class receiver {
+public class Receiver {
 
 }

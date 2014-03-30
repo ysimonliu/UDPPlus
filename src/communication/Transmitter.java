@@ -1,5 +1,5 @@
 package communication;
 
-public class server {
+public class Transmitter {
 
 }
