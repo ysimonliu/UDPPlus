@@ -5,7 +5,8 @@ package forwardErrorCorrection;
  * Use 2D parity checksum to encode/decode message
  * The class should detect and correct all 1-bit errors, 
  * detect all 2-bit and 3-bit errors. 
- * We assume all messages are in ascii
+ * We assume all messages are in ascii, and there 
+ * are at most 2-bit errors
  * 
  * @author Valentine 
  */
@@ -60,7 +61,6 @@ public class Parity2DImpl implements FECInterface {
 		return sb.toString();
 	}
 
-	// TODO(mingju): cannot detect 2bit errors if occurs on the same row
 	@Override
 	public String decode(String encodedText) throws UnlocatableErrorException {
 		
@@ -90,32 +90,48 @@ public class Parity2DImpl implements FECInterface {
 			}
 		}
 		
-		int numErrors = 0;
+		int numErrorsY = 0;
 		for(int i = 0; i < message.length; ++i) {
-			if(y1BitCount[i] % 2 == 0) {
-				if(yParityBits[i] == 0) {
-					++numErrors;
-					
-					if(numErrors > 1) {
-						throw new UnlocatableErrorException("An unlocatable error in the message is detected");
-					} else {
-						message[i] = forwardErrorCorrect(x1BitCount, xParityBits, message[i]);
-					}
+			boolean even = y1BitCount[i] % 2 == 0; 
+			if(even && yParityBits[i] == 0) {
+				++numErrorsY;
+				
+				if(numErrorsY > 1) {
+					throw new UnlocatableErrorException("An unlocatable error in the message is detected");
+				} else {
+					message[i] = forwardErrorCorrect(x1BitCount, xParityBits, message[i]);
 				}
-			} else {
-				if(yParityBits[i] == 1) {
-					++numErrors;
-					
-					if(numErrors > 1) {
-						throw new UnlocatableErrorException("An unlocatable error in the message is detected");
-					} else {
-						message[i] = forwardErrorCorrect(x1BitCount, xParityBits, message[i]);
-					}
+			} else if(!even && yParityBits[i] == 1){
+				++numErrorsY;
+				
+				if(numErrorsY > 1) {
+					throw new UnlocatableErrorException("An unlocatable error in the message is detected");
+				} else {
+					message[i] = forwardErrorCorrect(x1BitCount, xParityBits, message[i]);
 				}
-			}
+			} 
 			
 			sb.append(message[i]);
 		}
+		
+		int numErrorsX = 0;
+		for(int i = 0; i < xParityBits.length; ++i) {
+			boolean even = x1BitCount[i] % 2 == 0; 
+			if(even && xParityBits[i] == 0) {
+				++numErrorsX;
+				
+				if(numErrorsX > 1) {
+					throw new UnlocatableErrorException("An unlocatable error in the message is detected");
+				}
+			} else if(!even && xParityBits[i] == 1){
+				++numErrorsX;
+				
+				if(numErrorsX > 1) {
+					throw new UnlocatableErrorException("An unlocatable error in the message is detected");
+				}
+			} 
+		}
+		
 		
 		return sb.toString();
 	}
