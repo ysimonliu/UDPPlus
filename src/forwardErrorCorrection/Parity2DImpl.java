@@ -60,10 +60,7 @@ public class Parity2DImpl implements FECInterface {
 		return sb.toString();
 	}
 
-
-	// TODO(mingju): need to detect and correct errors
-	//				 and need to throw an exception when errors
-	//				 are detected but cannot be corrected.
+	// TODO(mingju): cannot detect 2bit errors if occurs on the same row
 	@Override
 	public String decode(String encodedText) throws UnlocatableErrorException {
 		
@@ -101,18 +98,8 @@ public class Parity2DImpl implements FECInterface {
 					
 					if(numErrors > 1) {
 						throw new UnlocatableErrorException("An unlocatable error in the message is detected");
-					}
-					
-					for(int j = 0; j < x1BitCount.length; ++j) {
-						if(x1BitCount[j] % 2 == 0) {
-							if(xParityBits[j] == 0) {
-								message[i] = (char)(message[i] ^ (1 << 6 - j));
-							}
-						} else {
-							if(xParityBits[j] == 1) {
-								message[i] = (char)(message[i] ^ (1 << 6 - j));
-							}
-						}
+					} else {
+						message[i] = forwardErrorCorrect(x1BitCount, xParityBits, message[i]);
 					}
 				}
 			} else {
@@ -121,18 +108,8 @@ public class Parity2DImpl implements FECInterface {
 					
 					if(numErrors > 1) {
 						throw new UnlocatableErrorException("An unlocatable error in the message is detected");
-					}
-					
-					for(int j = 0; j < x1BitCount.length; ++j) {
-						if(x1BitCount[j] % 2 == 0) {
-							if(xParityBits[j] == 0) {
-								message[i] = (char)(message[i] ^ (1 << 6 - j));
-							}
-						} else {
-							if(xParityBits[j] == 1) {
-								message[i] = (char)(message[i] ^ (1 << 6 - j));
-							}
-						}
+					} else {
+						message[i] = forwardErrorCorrect(x1BitCount, xParityBits, message[i]);
 					}
 				}
 			}
@@ -141,5 +118,23 @@ public class Parity2DImpl implements FECInterface {
 		}
 		
 		return sb.toString();
+	}
+	
+	private char forwardErrorCorrect(int[] bitCounts, 
+									 int[] parityBits, 
+									 char messageBit) {
+		for(int j = 0; j < bitCounts.length; ++j) {
+			if(bitCounts[j] % 2 == 0) {
+				if(parityBits[j] == 0) {
+					messageBit = (char)(messageBit ^ (1 << (bitCounts.length - 1) - j));
+				}
+			} else {
+				if(parityBits[j] == 1) {
+					messageBit = (char)(messageBit ^ (1 << (bitCounts.length - 1) - j));
+				}
+			}
+		}
+		
+		return messageBit;
 	}
 }

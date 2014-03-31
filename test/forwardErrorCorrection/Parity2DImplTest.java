@@ -250,7 +250,7 @@ public class Parity2DImplTest {
 	}
 	
 	@Test
-	public void testDecodeUpperCase2BitError() {
+	public void testDecodeUpperCase2BitErrorDiffRow() {
 		int H = Integer.parseInt("10000001", 2);
 		int E = Integer.parseInt("10011010", 2);
 		int L = Integer.parseInt("10011000", 2);
@@ -267,15 +267,37 @@ public class Parity2DImplTest {
 		
 		try {
 			parity2D.decode(sb.toString());
-			assertTrue("Failed!", false);
+			fail("UnlocatableErrorException not thrown. i.e.: errors not detected!");
 		} catch (UnlocatableErrorException e) {
-			assertTrue("Expected an exception", true);
+		}
+	}
+	
+	@Test
+	public void testDecodeUpperCase2BitErrorSameRow() {
+		int H = Integer.parseInt("10001001", 2);
+		int E = Integer.parseInt("10001010", 2);
+		int L = Integer.parseInt("10011000", 2);
+		int O =  Integer.parseInt("10011110", 2);
+		int last =  Integer.parseInt("00111101", 2);
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append((char)H);
+		sb.append((char)E);
+		sb.append((char)L);
+		sb.append((char)L);
+		sb.append((char)O);
+		sb.append((char)last);
+		
+		try {
+			parity2D.decode(sb.toString());
+			fail("UnlocatableErrorException not thrown. i.e.: errors not detected!");
+		} catch (UnlocatableErrorException e) {
 		}
 	}
 	
 	@Test
 	public void testDecodeLowerCase2BitError() {
-	
+		
 	}
 	
 	@Test
