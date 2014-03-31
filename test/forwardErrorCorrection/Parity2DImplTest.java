@@ -167,26 +167,115 @@ public class Parity2DImplTest {
 	@Test
 	public void testDecodeUpperCase1BitError() {
 		
+		int H = Integer.parseInt("10000001", 2);
+		int E = Integer.parseInt("10001010", 2);
+		int L = Integer.parseInt("10011000", 2);
+		int O =  Integer.parseInt("10011110", 2);
+		int last =  Integer.parseInt("00111101", 2);
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append((char)H);
+		sb.append((char)E);
+		sb.append((char)L);
+		sb.append((char)L);
+		sb.append((char)O);
+		sb.append((char)last);
+		
+		String message = "";
+		
+		try {
+			message = parity2D.decode(sb.toString());
+		} catch (UnlocatableErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertEquals(message, "HELLO");
 	}
 	
 	@Test
 	public void testDecodeLowerCase1BitError() {
+		int h = Integer.parseInt("11110000", 2);
+		int e = Integer.parseInt("11001011", 2);
+		int l = Integer.parseInt("11011001", 2);
+		int o = Integer.parseInt("11011111", 2);
+		int last = Integer.parseInt("00011101", 2);;
 		
+		StringBuilder sb = new StringBuilder();
+		sb.append((char)h);
+		sb.append((char)e);
+		sb.append((char)l);
+		sb.append((char)l);
+		sb.append((char)o);
+		sb.append((char)last);
+		
+		String message = "";
+		try {
+			message = parity2D.decode(sb.toString());
+		} catch (UnlocatableErrorException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		assertEquals(message, "hello");
 	}
 	
 	@Test
 	public void testDecodeMixedCase1BitError() {
+		int H = Integer.parseInt("10010001", 2);
+		int E = Integer.parseInt("10001010", 2);
+		int l = Integer.parseInt("11011001", 2);
+		int L = Integer.parseInt("10011000", 2);
+		int o = Integer.parseInt("11111111", 2);
+		int last = Integer.parseInt("00111101", 2);;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append((char)H);
+		sb.append((char)E);
+		sb.append((char)l);
+		sb.append((char)L);
+		sb.append((char)o);
+		sb.append((char)last);
+		
+		String message = "";
+		try {
+			message = parity2D.decode(sb.toString());
+		} catch (UnlocatableErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertEquals(message, "HElLo");
 		
 	}
 	
 	@Test
 	public void testDecodeUpperCase2BitError() {
+		int H = Integer.parseInt("10000001", 2);
+		int E = Integer.parseInt("10011010", 2);
+		int L = Integer.parseInt("10011000", 2);
+		int O =  Integer.parseInt("10011110", 2);
+		int last =  Integer.parseInt("00111101", 2);
 		
+		StringBuilder sb = new StringBuilder();
+		sb.append((char)H);
+		sb.append((char)E);
+		sb.append((char)L);
+		sb.append((char)L);
+		sb.append((char)O);
+		sb.append((char)last);
+		
+		try {
+			parity2D.decode(sb.toString());
+			assertTrue("Failed!", false);
+		} catch (UnlocatableErrorException e) {
+			assertTrue("Expected an exception", true);
+		}
 	}
 	
 	@Test
 	public void testDecodeLowerCase2BitError() {
-		
+	
 	}
 	
 	@Test

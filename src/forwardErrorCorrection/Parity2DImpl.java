@@ -77,11 +77,7 @@ public class Parity2DImpl implements FECInterface {
 		int[] xParityBits = new int[7];
 		
 		for(int i = 0; i < xParityBits.length; ++i) {
-			if((last & (1 << i)) == 1) {
-				xParityBits[xParityBits.length - 1 - i] = 1;				
-			} else {
-				xParityBits[xParityBits.length - 1 - i] = 0;
-			}
+			xParityBits[i] = (last & (1 << (xParityBits.length - 1) - i)) != 0 ? 1 : 0;				
 		}
 		
 		for(int i = 0; i < encodedText.length() - 1; ++i) {
@@ -98,21 +94,47 @@ public class Parity2DImpl implements FECInterface {
 		}
 		
 		int numErrors = 0;
-		for(int i = 0; i < encodedText.length() - 1; ++i) {
+		for(int i = 0; i < message.length; ++i) {
 			if(y1BitCount[i] % 2 == 0) {
 				if(yParityBits[i] == 0) {
-					// TODO(mingju): there is an error, do FEC
 					++numErrors;
+					
+					if(numErrors > 1) {
+						throw new UnlocatableErrorException("An unlocatable error in the message is detected");
+					}
+					
+					for(int j = 0; j < x1BitCount.length; ++j) {
+						if(x1BitCount[j] % 2 == 0) {
+							if(xParityBits[j] == 0) {
+								message[i] = (char)(message[i] ^ (1 << 6 - j));
+							}
+						} else {
+							if(xParityBits[j] == 1) {
+								message[i] = (char)(message[i] ^ (1 << 6 - j));
+							}
+						}
+					}
 				}
 			} else {
 				if(yParityBits[i] == 1) {
-					// TODO(mingju): there is an error, do FEC
 					++numErrors;
+					
+					if(numErrors > 1) {
+						throw new UnlocatableErrorException("An unlocatable error in the message is detected");
+					}
+					
+					for(int j = 0; j < x1BitCount.length; ++j) {
+						if(x1BitCount[j] % 2 == 0) {
+							if(xParityBits[j] == 0) {
+								message[i] = (char)(message[i] ^ (1 << 6 - j));
+							}
+						} else {
+							if(xParityBits[j] == 1) {
+								message[i] = (char)(message[i] ^ (1 << 6 - j));
+							}
+						}
+					}
 				}
-			}
-			
-			if(numErrors > 1) {
-				throw new UnlocatableErrorException("An unlocatable error in the message is detected");
 			}
 			
 			sb.append(message[i]);
