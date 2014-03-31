@@ -132,7 +132,6 @@ public class Parity2DImpl implements FECInterface {
 			} 
 		}
 		
-		
 		return sb.toString();
 	}
 	
