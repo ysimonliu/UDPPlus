@@ -4,7 +4,7 @@ package forwardErrorCorrection;
  * 
  * Use 2D parity checksum to encode/decode message
  * The class should detect and correct all 1-bit errors, 
- * detect all 2-bit and 3-bit errors. 
+ * detect all 2-bit errors. 
  * We assume all messages are in ascii, and there 
  * are at most 2-bit errors
  * 
