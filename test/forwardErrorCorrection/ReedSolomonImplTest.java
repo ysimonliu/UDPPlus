@@ -17,12 +17,13 @@ public class ReedSolomonImplTest {
 	
 	ReedSolomonImpl rsImpl;
 	private static final int EXPECTED_EC_BYTES = 3;
+	private static final int MAX_EC_BYTES = 5;
 	
 	@Before
 	public void setUp() {
 		int expectedECBytes = EXPECTED_EC_BYTES;
-		if (expectedECBytes >= 10) {
-			expectedECBytes = 10;
+		if (expectedECBytes >= MAX_EC_BYTES) {
+			expectedECBytes = MAX_EC_BYTES;
 		}
 		this.rsImpl = new ReedSolomonImpl(expectedECBytes);
 	}
@@ -31,7 +32,8 @@ public class ReedSolomonImplTest {
 	public void testEncodeUpperCase() {
 		String message = "HELLO";
 		String encoded = rsImpl.encode(message);
-		String expected = "72, 69, 76, 76, 79, 168, 254, 255";
+		System.out.println(encoded);
+		String expected = "72, 69, 76, 76, 79, 201, 91, 109, 228, 248, 128";
 		assertEquals(expected, encoded);
 	}
 	
@@ -39,7 +41,8 @@ public class ReedSolomonImplTest {
 	public void testEncodeLowerCase() {
 		String message = "hello";
 		String encoded = rsImpl.encode(message);
-		String expected = "104, 101, 108, 108, 111, 98, 199, 222";
+		System.out.println(encoded);
+		String expected = "104, 101, 108, 108, 111, 21, 60, 157, 171, 158, 216";
 		assertEquals(expected, encoded);
 	}
 	
@@ -47,27 +50,28 @@ public class ReedSolomonImplTest {
 	public void testEncodeMixedCase() {
 		String message = "HElLo";
 		String encoded = rsImpl.encode(message);
-		String expected = "72, 69, 108, 76, 111, 121, 173, 243";
+		System.out.println(encoded);
+		String expected = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 68";
 		assertEquals(expected, encoded);
 	}
 	
 	@Test
 	public void testDecodedUpperCaseNoError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "72, 69, 76, 76, 79, 168, 254, 255";
+		String encoded = "72, 69, 76, 76, 79, 201, 91, 109, 228, 248, 128";
 		String message = rsImpl.decode(encoded);
 		assertEquals(message, "HELLO");
 	}
 	
 	@Test
 	public void testDecodedLowerCaseNoError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "104, 101, 108, 108, 111, 98, 199, 222";
+		String encoded = "104, 101, 108, 108, 111, 21, 60, 157, 171, 158, 216";
 		String message = rsImpl.decode(encoded);
 		assertEquals(message, "hello");
 	}
 	
 	@Test
 	public void testDecodedMixedCaseNoError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "72, 69, 108, 76, 111, 121, 173, 243";
+		String encoded = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 68";
 		String message = rsImpl.decode(encoded);
 		assertEquals(message, "HElLo");
 	}
@@ -92,48 +96,74 @@ public class ReedSolomonImplTest {
 	
 	@Test
 	public void testDecodeUpperCaseECBitDataError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String correctIntArrayString = "72, 69, 76, 76, 79, 168, 254, 255";
+		String correctIntArrayString = "72, 69, 76, 76, 79, 201, 91, 109, 228, 248, 128";
 		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
 			int[] encodedIntArrayWithErrors = messUpDataBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
 			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-			System.out.println(encodedStringWithErrors);
+			String decoded = rsImpl.decode(encodedStringWithErrors);
+			assertEquals("HELLO", decoded);
+		}
+	}
+	
+	@Test
+	public void testDecodeUpperCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
+		String correctIntArrayString = "72, 69, 76, 76, 79, 201, 91, 109, 228, 248, 128";
+		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
+			int[] encodedIntArrayWithErrors = messUpParityBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
+			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
 			String decoded = rsImpl.decode(encodedStringWithErrors);
 			assertEquals("HELLO", decoded);
 		}
 	}
 
 	@Test
-	public void testDecodeUpperCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "72, 69, 76, 76, 79, 168, 254, 1";
-		String message = rsImpl.decode(encoded);
-		assertEquals(message, "HELLO");
-	}
-	
-	@Test
 	public void testDecodeLowerCaseECBitDataError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "104, 12, 108, 108, 111, 98, 199, 222";
-		String message = rsImpl.decode(encoded);
-		assertEquals(message, "hello");
+		String correctIntArrayString = "104, 101, 108, 108, 111, 21, 60, 157, 171, 158, 216";
+		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
+			int[] encodedIntArrayWithErrors = messUpDataBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
+			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
+			String decoded = rsImpl.decode(encodedStringWithErrors);
+			assertEquals("hello", decoded);
+		}
 	}
 	
 	@Test
 	public void testDecodeLowerCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "104, 101, 108, 108, 111, 98, 199, 245";
-		String message = rsImpl.decode(encoded);
-		assertEquals(message, "hello");
+		String correctIntArrayString = "104, 101, 108, 108, 111, 21, 60, 157, 171, 158, 216";
+		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
+			int[] encodedIntArrayWithErrors = messUpParityBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
+			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
+			String decoded = rsImpl.decode(encodedStringWithErrors);
+			assertEquals("hello", decoded);
+		}
 	}
+	
 	@Test
 	public void testDecodeMixedCaseECBitDataError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "72, 33, 108, 76, 111, 121, 173, 243";
-		String message = rsImpl.decode(encoded);
-		assertEquals(message, "HElLo");
+		String correctIntArrayString = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 68";
+		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
+			int[] encodedIntArrayWithErrors = messUpDataBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
+			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
+			String decoded = rsImpl.decode(encodedStringWithErrors);
+			assertEquals("HElLo", decoded);
+		}
 	}
 	
 	@Test
 	public void testDecodeMixedCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-		String encoded = "72, 69, 108, 76, 111, 121, 133, 243";
-		String message = rsImpl.decode(encoded);
-		assertEquals(message, "HElLo");
+		String correctIntArrayString = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 68";
+		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
+			int[] encodedIntArrayWithErrors = messUpParityBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
+			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
+			String decoded = rsImpl.decode(encodedStringWithErrors);
+			assertEquals("HElLo", decoded);
+		}
+	}
+	
+	@Test(expected = NotAsciiCodeExpcetion.class)
+	public void testNotAsciiCodeException() throws ReedSolomonException, NotAsciiCodeExpcetion {
+		String encoded = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 992";
+		String decoded = rsImpl.decode(encoded);
 	}
 	
 	// below are helper functions
@@ -149,7 +179,7 @@ public class ReedSolomonImplTest {
 		int[] modifiedArray = originalIntArray;
 		int length = originalIntArray.length;
 		for (int i = 0; i < noBitsToMessUp; i++) {
-			modifiedArray[length - i] = generateDiffAsciiCode(originalIntArray[length - i]);
+			modifiedArray[length - 1 - i] = generateDiffAsciiCode(originalIntArray[length - 1 - i]);
 		}
 		return modifiedArray;
 	}

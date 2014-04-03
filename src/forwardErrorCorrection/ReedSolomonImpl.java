@@ -23,11 +23,20 @@ public class ReedSolomonImpl implements FECInterface {
 	private int expectedECBytes;
 	private GenericGF genericGF;
 	
+	/**
+	 * Constructor
+	 * @param expectedECBytes the number of bits that is expected to have an error
+	 */
 	public ReedSolomonImpl(int expectedECBytes) {
-		this.expectedECBytes = expectedECBytes;
+		this.expectedECBytes = 2 * expectedECBytes;
 		this.genericGF = DEFAULT_GENERIC_GF;
 	}
 	
+	/**
+	 * 
+	 * @param expectedECBytes expectedECBytes the number of bits that is expected to have an error
+	 * @param genericGF a generic GF for the Reed Solomon algorithm
+	 */
 	public ReedSolomonImpl(int expectedECBytes, GenericGF genericGF) {
 		this.expectedECBytes = expectedECBytes;
 		this.genericGF = genericGF;
