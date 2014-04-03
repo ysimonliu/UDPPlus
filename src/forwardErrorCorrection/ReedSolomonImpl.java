@@ -51,8 +51,7 @@ public class ReedSolomonImpl implements FECInterface {
 		
 		rsEncoder.encode(toEncode, expectedECBytes);
 		
-		String result = Arrays.toString(toEncode);
-		return result.substring(1, result.length()-1);
+		return composeIntArrayString(toEncode);
 	}
 
 	@Override
@@ -60,13 +59,7 @@ public class ReedSolomonImpl implements FECInterface {
 		
 		ReedSolomonDecoder rsDecoder = new ReedSolomonDecoder(genericGF);
 		
-		String[] codes = encodedText.split(",");
-		int[] toDecode = new int[codes.length];
-		for (int i = 0; i < codes.length; i++) {
-			int tmp = Integer.parseInt(codes[i].trim());
-			if (tmp > 255 || tmp <= 0) throw new NotAsciiCodeExpcetion("Cannot decode non-ASCII code");
-			toDecode[i] = tmp;
-		}
+		int[] toDecode = parseStringToIntArray(encodedText);
 
 		rsDecoder.decode(toDecode, expectedECBytes);
 		
@@ -75,6 +68,22 @@ public class ReedSolomonImpl implements FECInterface {
 			sb.append((char)toDecode[i]);
 		}
 		return sb.toString();
+	}
+	
+	public static String composeIntArrayString(int[] intArray) {
+		String result = Arrays.toString(intArray);
+		return result.substring(1, result.length()-1);
+	}
+	
+	public static int[] parseStringToIntArray(String intArrString) throws NotAsciiCodeExpcetion {
+		String[] codes = intArrString.split(",");
+		int[] toDecode = new int[codes.length];
+		for (int i = 0; i < codes.length; i++) {
+			int tmp = Integer.parseInt(codes[i].trim());
+			if (tmp > 255 || tmp <= 0) throw new NotAsciiCodeExpcetion("Cannot decode non-ASCII code");
+			toDecode[i] = tmp;
+		}
+		return toDecode;
 	}
 
 }
