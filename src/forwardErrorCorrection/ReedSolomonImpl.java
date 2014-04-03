@@ -12,7 +12,7 @@ import reedSolomon.ReedSolomonException;
  * Use Reed-Solomon to encode/decode message
  * We assume all messages are in ascii
  * 
- * @author Valentine 
+ * @author Simon 
  */
 public class ReedSolomonImpl implements FECInterface {
 
