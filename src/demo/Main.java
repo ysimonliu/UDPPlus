@@ -3,7 +3,7 @@ package demo;
 import java.util.Scanner;
 
 import forwardErrorCorrection.Parity2DImpl;
-import forwardErrorCorrection.UnlocatableErrorException;
+import forwardErrorCorrectionException.UnlocatableErrorException;
 
 public class Main {
 	

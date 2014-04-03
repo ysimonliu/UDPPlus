@@ -2,6 +2,8 @@ package forwardErrorCorrection;
 
 import java.util.Arrays;
 
+import forwardErrorCorrectionException.NotAsciiCodeExpcetion;
+
 import reedSolomon.GenericGF;
 import reedSolomon.ReedSolomonDecoder;
 import reedSolomon.ReedSolomonEncoder;
@@ -54,14 +56,16 @@ public class ReedSolomonImpl implements FECInterface {
 	}
 
 	@Override
-	public String decode(String encodedText) throws UnlocatableErrorException, ReedSolomonException {
+	public String decode(String encodedText) throws ReedSolomonException, NotAsciiCodeExpcetion {
 		
 		ReedSolomonDecoder rsDecoder = new ReedSolomonDecoder(genericGF);
 		
 		String[] codes = encodedText.split(",");
 		int[] toDecode = new int[codes.length];
 		for (int i = 0; i < codes.length; i++) {
-			toDecode[i] = Integer.parseInt(codes[i].trim());
+			int tmp = Integer.parseInt(codes[i].trim());
+			if (tmp > 255 || tmp <= 0) throw new NotAsciiCodeExpcetion("Cannot decode non-ASCII code");
+			toDecode[i] = tmp;
 		}
 
 		rsDecoder.decode(toDecode, expectedECBytes);

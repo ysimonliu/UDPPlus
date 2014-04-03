@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import forwardErrorCorrectionException.UnlocatableErrorException;
+
 
 public class Parity2DImplTest {
 

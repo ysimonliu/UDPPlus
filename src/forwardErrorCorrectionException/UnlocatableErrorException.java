@@ -1,4 +1,4 @@
-package forwardErrorCorrection;
+package forwardErrorCorrectionException;
 
 public class UnlocatableErrorException extends Exception {
 

@@ -1,5 +1,7 @@
 package forwardErrorCorrection;
 
+import forwardErrorCorrectionException.UnlocatableErrorException;
+
 /**
  * 
  * Use 2D parity checksum to encode/decode message
