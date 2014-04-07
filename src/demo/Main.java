@@ -3,6 +3,7 @@ package demo;
 import java.util.Scanner;
 
 import forwardErrorCorrection.Parity2DImpl;
+import forwardErrorCorrection.ReedSolomonImpl;
 import forwardErrorCorrectionException.UnlocatableErrorException;
 
 public class Main {
@@ -28,10 +29,6 @@ public class Main {
 			int algorithm = scanner.nextInt();
 			scanner.nextLine();
 			
-			System.out.println("This is your message: ");
-			printMessageInBits(message);
-			
-			
 			System.out.println("How many faulty bit do you want to inject?: ");
 			int numFaults = scanner.nextInt();
 			scanner.nextLine();
@@ -40,6 +37,8 @@ public class Main {
 			// now if I wanna inject fault, I have to modify the encoded message directly
 			// fml. Bad design! So bad! OMG! I cannot even remember how I encode =.=
 			if(algorithm == 1) {
+				System.out.println("This is your message: ");
+				printMessageInBits(message);
 				String encodedMessage = parity2D.encode(message);
 				StringBuilder faultyMessage = new StringBuilder(message);
 				StringBuilder faultyEncodedMessage = new StringBuilder(encodedMessage);
@@ -85,7 +84,56 @@ public class Main {
 					System.out.println(">= 2-bit errors are detected. Need retransmission.");
 				}
 				
-			} else { // TODO(mingju): Reed-Solomon
+			} else {
+				System.out.println("Please choose the expected number of errors: ");
+				int ecBytes = scanner.nextInt();
+				scanner.nextLine();
+				if (ecBytes > 8) {
+					System.out.println("ERROR: Your expected number of errors exceeded the length of a byte, so change your input to 8");
+					ecBytes = 8;
+				}
+				System.out.println("This is your message: ");
+				printMessageInRSBits(message, ecBytes);
+				ReedSolomonImpl rsImpl = new ReedSolomonImpl(ecBytes);
+				
+				String encodedMessage = rsImpl.encode(message);
+				StringBuilder faultyMessage = new StringBuilder(message);
+				StringBuilder faultyEncodedMessage = new StringBuilder(encodedMessage);
+				
+				int count = 1;
+				while(numFaults > 0) {
+					System.out.println("Fault #" + count++);
+					System.out.println("Which character: ");
+					int charPos = scanner.nextInt();
+					scanner.nextLine();
+					System.out.println("Which bit position (leftmost bit is zero): ");
+					int bitPos = scanner.nextInt();
+					scanner.nextLine();
+					
+					char tmp = message.charAt(charPos - 1);
+					tmp = (char) (tmp ^ (1 << bitPos));
+					faultyMessage.deleteCharAt(charPos - 1);
+					faultyMessage.insert(charPos - 1, tmp);
+					
+					bitPos += 1;
+					tmp = encodedMessage.charAt(charPos - 1);
+					tmp = (char) (tmp ^ (1 << bitPos));
+					faultyEncodedMessage.deleteCharAt(charPos - 1);
+					faultyEncodedMessage.insert(charPos - 1, tmp);
+					
+					numFaults--;
+				}
+				
+				try {
+					String decodedMessage = parity2D.decode(faultyEncodedMessage.toString());
+					System.out.println("Message successfully decoded");
+					System.out.println("You entered " + message);
+					System.out.println("The receiver received " + faultyMessage);
+					System.out.println("The receiver corrected the error and got " + decodedMessage);
+					
+				} catch (Exception e) {
+					System.out.println("Reed-Solomon cannot decode the given string, sorry.");
+				}
 				
 			}
 			
@@ -101,6 +149,20 @@ public class Main {
 			
 			System.out.println("character " + (i + 1) + ": " +  c 
 					+ " = " + Integer.toBinaryString(c));
+		}
+		
+	}
+	
+	private static void printMessageInRSBits(String message, int ecBytes) {
+		
+		for(int i = 0; i < message.length() + 2*ecBytes; ++i) {
+			if (i < message.length()) {
+				char c = message.charAt(i);
+				System.out.println("character " + (i + 1) + ": " +  c 
+						+ " = " + Integer.toBinaryString(c));
+			}
+			System.out.println("Parity Bit " + (i - ecBytes) + ": "
+					+ " = ");
 		}
 		
 	}

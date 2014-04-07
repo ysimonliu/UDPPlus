@@ -27,7 +27,6 @@ public class Parity2DImplTest {
 		int L = Integer.parseInt("10011000", 2);
 		int O =  Integer.parseInt("10011110", 2);
 		int last =  Integer.parseInt("00111101", 2);
-		
 		StringBuilder sb = new StringBuilder();
 		sb.append((char)H);
 		sb.append((char)E);

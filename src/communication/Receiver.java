@@ -3,13 +3,13 @@ package communication;
 import java.net.DatagramPacket;
 
 import reedSolomon.ReedSolomonException;
-
 import forwardErrorCorrection.ReedSolomonImpl;
 import forwardErrorCorrectionException.NotAsciiCodeExpcetion;
+import forwardErrorCorrectionException.UndecodableException;
 
 public class Receiver {
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws UndecodableException{
 		
 		ReedSolomonImpl rsImpl = new ReedSolomonImpl(Transmitter.EC_BYTES);
 		
