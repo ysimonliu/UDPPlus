@@ -73,11 +73,7 @@ public class ReedSolomonImpl implements FECInterface {
 
 		rsDecoder.decode(toDecode, expectedECBytes);
 		
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < toDecode.length - expectedECBytes; i++) {
-			sb.append((char)toDecode[i]);
-		}
-		return sb.toString();
+		return convertBytesToString(toDecode);
 	}
 	
 	public static String composeIntArrayString(int[] intArray) {
@@ -88,6 +84,14 @@ public class ReedSolomonImpl implements FECInterface {
 				sb.append("0");
 			}
 			sb.append(tmp);
+		}
+		return sb.toString();
+	}
+	
+	public String convertBytesToString(int[] toDecode) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < toDecode.length - expectedECBytes; i++) {
+			sb.append((char)toDecode[i]);
 		}
 		return sb.toString();
 	}

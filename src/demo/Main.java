@@ -85,20 +85,18 @@ public class Main {
 				}
 				
 			} else {
-				System.out.println("Please choose the expected number of errors: ");
-				int ecBytes = scanner.nextInt();
-				scanner.nextLine();
-				if (ecBytes > 8) {
+				if (numFaults > 8) {
 					System.out.println("ERROR: Your expected number of errors exceeded the length of a byte, so change your input to 8");
-					ecBytes = 8;
+					numFaults = 8;
 				}
-				System.out.println("This is your message: ");
-				printMessageInRSBits(message, ecBytes);
-				ReedSolomonImpl rsImpl = new ReedSolomonImpl(ecBytes);
+				
+				ReedSolomonImpl rsImpl = new ReedSolomonImpl(numFaults);
 				
 				String encodedMessage = rsImpl.encode(message);
-				StringBuilder faultyMessage = new StringBuilder(message);
 				StringBuilder faultyEncodedMessage = new StringBuilder(encodedMessage);
+				
+				System.out.println("This is your message: ");
+				printMessageInRSBits(message, encodedMessage, numFaults);
 				
 				int count = 1;
 				while(numFaults > 0) {
@@ -110,25 +108,23 @@ public class Main {
 					int bitPos = scanner.nextInt();
 					scanner.nextLine();
 					
-					char tmp = message.charAt(charPos - 1);
-					tmp = (char) (tmp ^ (1 << bitPos));
-					faultyMessage.deleteCharAt(charPos - 1);
-					faultyMessage.insert(charPos - 1, tmp);
-					
-					bitPos += 1;
-					tmp = encodedMessage.charAt(charPos - 1);
-					tmp = (char) (tmp ^ (1 << bitPos));
-					faultyEncodedMessage.deleteCharAt(charPos - 1);
-					faultyEncodedMessage.insert(charPos - 1, tmp);
+					int errorPos = (charPos - 1) * 8 + bitPos;
+					char tmp = encodedMessage.charAt(errorPos);
+					faultyEncodedMessage.deleteCharAt(errorPos);
+					if (tmp == '1') {
+						faultyEncodedMessage.insert(errorPos, '0');
+					} else {
+						faultyEncodedMessage.insert(errorPos, '1');
+					}
 					
 					numFaults--;
 				}
 				
 				try {
-					String decodedMessage = parity2D.decode(faultyEncodedMessage.toString());
+					String decodedMessage = rsImpl.decode(faultyEncodedMessage.toString());
 					System.out.println("Message successfully decoded");
 					System.out.println("You entered " + message);
-					System.out.println("The receiver received " + faultyMessage);
+					System.out.println("The receiver received " + rsImpl.convertBytesToString(ReedSolomonImpl.parseStringToIntArray(faultyEncodedMessage.toString())));
 					System.out.println("The receiver corrected the error and got " + decodedMessage);
 					
 				} catch (Exception e) {
@@ -153,16 +149,17 @@ public class Main {
 		
 	}
 	
-	private static void printMessageInRSBits(String message, int ecBytes) {
+	private static void printMessageInRSBits(String message, String encodedMessage, int ecBytes) {
 		
 		for(int i = 0; i < message.length() + 2*ecBytes; ++i) {
 			if (i < message.length()) {
 				char c = message.charAt(i);
-				System.out.println("character " + (i + 1) + ": " +  c 
-						+ " = " + Integer.toBinaryString(c));
+				System.out.println("Byte " + (i + 1) + ": " +  c 
+						+ " = " + encodedMessage.substring(i * 8, i * 8 + 8));
+			} else {
+				System.out.println("Byte" + (i + 1) + ": "
+					+ "parity" + (i + 1 - message.length()) + " = " + encodedMessage.substring(i * 8, i * 8 + 8));
 			}
-			System.out.println("Parity Bit " + (i - ecBytes) + ": "
-					+ " = ");
 		}
 		
 	}
