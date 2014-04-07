@@ -78,17 +78,13 @@ public class Main {
 				System.out.println("You entered " + message);
 				System.out.println("The receiver received " + faultyMessage);
 				System.out.println("The receiver corrected the error and got " + decodedMessage);
-				
 			} catch (UnlocatableErrorException e) {
 				System.out.println("2D Parity can only correct at most 1-bit error.");
-				System.out.println(">= 2-bit errors are detected. Need retransmission.");
-			} catch (NotAsciiCodeExpcetion e) {
+				System.out.println("More than 2-bit errors are detected. Need retransmission.");
+			} catch (NotAsciiCodeExpcetion | ReedSolomonException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (ReedSolomonException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} 
 		}
 		
 		System.out.println("END");
