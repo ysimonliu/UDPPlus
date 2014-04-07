@@ -96,7 +96,7 @@ public class Main {
 			char c = message.charAt(i);
 			
 			System.out.println("character " + (i + 1) + ": " +  c 
-					+ " = " + Integer.toBinaryString(c));
+					+ " = 0" + Integer.toBinaryString(c));
 		}
 	}
 	
