@@ -8,7 +8,10 @@ import forwardErrorCorrectionException.UnlocatableErrorException;
  * The class should detect and correct all 1-bit errors, 
  * detect all 2-bit errors. 
  * We assume all messages are in ascii, and there 
- * are at most 2-bit errors
+ * are at most 2-bit errors. Note that 2D parity can 
+ * detect odd number of bit errors. However, we gave up
+ * this feature in order to implement data recovery, 
+ * i.e: forward error correction 
  * 
  * @author Valentine 
  */
@@ -19,8 +22,11 @@ public class Parity2DImpl implements FECInterface {
 	 * ASCII code uses 7 bits; thus, the algorithm left shift 1 bit
 	 * every char and appends a parity bit at its end.
 	 * A last row is added to the encoded message for the 
-	 * horizontal parity, counting number of 1's bit in every column.
-	 * The most significant of the horizontal bit is zero. 
+	 * column parity bits, counting number of 1's bit in every column.
+	 * The most significant of the column bit is zero.
+	 * We did not add a parity bit to check all parity bits. 
+	 * Hence, we assume parity bits do not get corrupted during 
+	 * transmission.  
 	 */
 	@Override
 	public String encode(String plainText) {
@@ -63,6 +69,15 @@ public class Parity2DImpl implements FECInterface {
 		return sb.toString();
 	}
 
+	/**
+	 * Use 2D parity decoding scheme to decode message. 
+	 * The method keeps count of the number of 1's bits for
+	 * each row and column, and check against parity bits to
+	 * verify if there is any error. If there is an 1-bit error,
+	 * the method corrects the error. If there are more than 1,
+	 * the method throws an UnlocatableErrorException.
+	 *
+	 */
 	@Override
 	public String decode(String encodedText) throws UnlocatableErrorException {
 		
