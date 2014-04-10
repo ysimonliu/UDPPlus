@@ -7,15 +7,17 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import forwardErrorCorrection.FECInterface;
 
-public class Transmitter {
+public class UDPPlusTransmitter {
 	
 	public static final int EC_BYTES = 3;
 	private DatagramSocket socket;
 	private byte[] outBuf;
 	private int port;
 	private FECInterface fec;
+	private InetAddress IPAddress;
 	
-	public Transmitter(int port, FECInterface fec) throws SocketException {
+	public UDPPlusTransmitter(InetAddress IPAddress, int port, FECInterface fec) throws SocketException {
+		this.IPAddress = IPAddress;
 		this.socket = new DatagramSocket();
 		this.outBuf = new byte[1024];
 		this.port = port;
@@ -24,7 +26,7 @@ public class Transmitter {
 	
 	public void send(String msg) throws IOException{
 		try {
-			InetAddress IPAddress = InetAddress.getByName("localhost");
+			this.IPAddress = InetAddress.getByName("localhost");
 			String encoded = fec.encode(msg);
 			System.out.println("Encoded message is: " + encoded);
 			outBuf = encoded.getBytes();
