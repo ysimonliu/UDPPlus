@@ -13,7 +13,7 @@ public class Parity2DImplTest {
 	Parity2DImpl parity2D;
 	
 	@Before
-	public void startUp() {
+	public void setUp() {
 		parity2D = new Parity2DImpl();
 	}
 	

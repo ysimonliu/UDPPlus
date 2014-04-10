@@ -11,7 +11,6 @@ public class Main {
 	public static void main(String args[]) {
 		
 		Scanner scanner = new Scanner(System.in);
-		
 		Parity2DImpl parity2D = new Parity2DImpl();
 		
 		while(true) {
