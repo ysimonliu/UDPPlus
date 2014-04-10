@@ -7,6 +7,11 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import forwardErrorCorrection.FECInterface;
 
+/**
+ * The UDPPlusTransmitter is based on UDP, and can encode a message using one of the Forward Error Correction algorithm, and send to a UDPPlusReceiver
+ * @author Simon Liu
+ *
+ */
 public class UDPPlusTransmitter {
 	
 	public static final int EC_BYTES = 3;
@@ -16,6 +21,13 @@ public class UDPPlusTransmitter {
 	private InetAddress IPAddress;
 	private int port;
 	
+	/**
+	 * Constructs an UDPPlusTransmitter instance
+	 * @param IPAddress - the IP address of the receiver
+	 * @param port - the port of the receiver
+	 * @param fec - the forward error correction algorithm
+	 * @throws SocketException
+	 */
 	public UDPPlusTransmitter(InetAddress IPAddress, int port, FECInterface fec) throws SocketException {
 		this.socket = new DatagramSocket();
 		this.outBuf = new byte[65508];
@@ -24,16 +36,17 @@ public class UDPPlusTransmitter {
 		this.port = port;
 	}
 	
+	/**
+	 * Sends out a message to the receiver
+	 * @param msg - the message to be sent over in plain text as a {@link String}}
+	 * @throws IOException
+	 */
 	public void send(String msg) throws IOException{
 		try {
-			System.out.println("Original message is: " + msg);
 			String encoded = fec.encode(msg);
-			System.out.println("Encoded message is: " + encoded);
 			outBuf = encoded.getBytes();
 			DatagramPacket outPacket = new DatagramPacket(outBuf, outBuf.length, IPAddress, port);
-			System.out.println("Now sending out message");
 			socket.send(outPacket);
-			System.out.println("Message sent");
 		} catch (IOException ex) {
 			System.out.println("Transmitter failed to send message");
 		} finally {
