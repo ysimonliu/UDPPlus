@@ -91,102 +91,55 @@ public class ReedSolomonImplTest {
 		assertEquals(message, rsImpl.decode(rsImpl.encode(message)));
 	}
 	
-//	@Test
-//	public void testDecodeUpperCaseECBitDataError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String correctIntArrayString = "72, 69, 76, 76, 79, 201, 91, 109, 228, 248, 128";
-//		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
-//			int[] encodedIntArrayWithErrors = messUpDataBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
-//			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-//			String decoded = rsImpl.decode(encodedStringWithErrors);
-//			assertEquals("HELLO", decoded);
-//		}
-//	}
-//	
-//	@Test
-//	public void testDecodeUpperCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String correctIntArrayString = "72, 69, 76, 76, 79, 201, 91, 109, 228, 248, 128";
-//		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
-//			int[] encodedIntArrayWithErrors = messUpParityBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
-//			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-//			String decoded = rsImpl.decode(encodedStringWithErrors);
-//			assertEquals("HELLO", decoded);
-//		}
-//	}
-//
-//	@Test
-//	public void testDecodeLowerCaseECBitDataError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String correctIntArrayString = "104, 101, 108, 108, 111, 21, 60, 157, 171, 158, 216";
-//		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
-//			int[] encodedIntArrayWithErrors = messUpDataBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
-//			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-//			String decoded = rsImpl.decode(encodedStringWithErrors);
-//			assertEquals("hello", decoded);
-//		}
-//	}
-//	
-//	@Test
-//	public void testDecodeLowerCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String correctIntArrayString = "104, 101, 108, 108, 111, 21, 60, 157, 171, 158, 216";
-//		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
-//			int[] encodedIntArrayWithErrors = messUpParityBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
-//			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-//			String decoded = rsImpl.decode(encodedStringWithErrors);
-//			assertEquals("hello", decoded);
-//		}
-//	}
-//	
-//	@Test
-//	public void testDecodeMixedCaseECBitDataError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String correctIntArrayString = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 68";
-//		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
-//			int[] encodedIntArrayWithErrors = messUpDataBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
-//			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-//			String decoded = rsImpl.decode(encodedStringWithErrors);
-//			assertEquals("HElLo", decoded);
-//		}
-//	}
-//	
-//	@Test
-//	public void testDecodeMixedCaseECBitParityError() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String correctIntArrayString = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 68";
-//		for (int i = 1; i <= EXPECTED_EC_BYTES / 2; i++) {
-//			int[] encodedIntArrayWithErrors = messUpParityBits(ReedSolomonImpl.parseStringToIntArray(correctIntArrayString), i);
-//			String encodedStringWithErrors = ReedSolomonImpl.composeIntArrayString(encodedIntArrayWithErrors);
-//			String decoded = rsImpl.decode(encodedStringWithErrors);
-//			assertEquals("HElLo", decoded);
-//		}
-//	}
-//	
-//	@Test(expected = NotAsciiCodeExpcetion.class)
-//	public void testNotAsciiCodeException() throws ReedSolomonException, NotAsciiCodeExpcetion {
-//		String encoded = "72, 69, 108, 76, 111, 28, 185, 240, 27, 6, 992";
-//		String decoded = rsImpl.decode(encoded);
-//	}
+	@Test
+	public void testDecodeUpperCaseECBitError() throws ReedSolomonException, NotAsciiCodeExpcetion, UndecodableException {
+		String correctIntArrayString = "0100100001000101010011000100110001001111110010010101101101101101111001001111100010000000";
+		for (int i = 1; i <= EXPECTED_EC_BYTES; i++) {
+			String erroneousString = messUpBits(correctIntArrayString, i);
+			String decoded = rsImpl.decode(erroneousString);
+			assertEquals("HELLO", decoded);
+		}
+	}
+	
+	@Test
+	public void testDecodeLowerCaseECBitError() throws ReedSolomonException, NotAsciiCodeExpcetion, UndecodableException {
+		String correctIntArrayString = "0110100001100101011011000110110001101111000101010011110010011101101010111001111011011000";
+		for (int i = 1; i <= EXPECTED_EC_BYTES; i++) {
+			String erroneousString = messUpBits(correctIntArrayString, i);
+			String decoded = rsImpl.decode(erroneousString);
+			assertEquals("hello", decoded);
+		}
+	}
+
+	@Test
+	public void testDecodeMixedCaseECBitError() throws ReedSolomonException, NotAsciiCodeExpcetion, UndecodableException {
+		String correctIntArrayString = "0100100001000101011011000100110001101111000111001011100111110000000110110000011001000100";
+		for (int i = 1; i <= EXPECTED_EC_BYTES; i++) {
+			String erroneousString = messUpBits(correctIntArrayString, i);
+			String decoded = rsImpl.decode(erroneousString);
+			assertEquals("HElLo", decoded);
+		}
+	}
 	
 	// below are helper functions
-	private int[] messUpDataBits(int[] originalIntArray, int noBitsToMessUp) {
-		int[] modifiedArray = originalIntArray;
+	private String messUpBits(String correctIntArrayString, int noBitsToMessUp) {
+		StringBuilder sb = new StringBuilder(correctIntArrayString);
+		int length = correctIntArrayString.length();
 		for (int i = 0; i < noBitsToMessUp; i++) {
-			modifiedArray[i] = generateDiffAsciiCode(originalIntArray[i]);
+			int pos = generateRandomNumber(length - 1);
+			sb.deleteCharAt(pos);
+			if (sb.charAt(pos) == '0') {
+				sb.insert(pos, '1');
+			} else {
+				sb.insert(pos, '0');
+			}
 		}
-		return modifiedArray;
+		return sb.toString();
 	}
 	
-	private int[] messUpParityBits(int[] originalIntArray, int noBitsToMessUp) {
-		int[] modifiedArray = originalIntArray;
-		int length = originalIntArray.length;
-		for (int i = 0; i < noBitsToMessUp; i++) {
-			modifiedArray[length - 1 - i] = generateDiffAsciiCode(originalIntArray[length - 1 - i]);
-		}
-		return modifiedArray;
-	}
-	
-	private int generateDiffAsciiCode(int original) {
+	private int generateRandomNumber(int range) {
 		Random r = new Random();
-		int randomAsciiCode = r.nextInt(255);
-		while (randomAsciiCode == original) {
-			randomAsciiCode = r.nextInt(255);
-		}
+		int randomAsciiCode = r.nextInt(range);
 		return randomAsciiCode;
 	}
 }

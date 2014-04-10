@@ -1,5 +1,10 @@
 package forwardErrorCorrectionException;
 
+/**
+ * This is the exception for an integer that is not a valid ASCII code
+ * @author Simon Liu
+ *
+ */
 public class NotAsciiCodeExpcetion extends Exception {
 	/**
 	 * 
