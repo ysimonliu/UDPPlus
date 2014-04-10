@@ -5,6 +5,11 @@ import forwardErrorCorrectionException.UndecodableException;
 import forwardErrorCorrectionException.UnlocatableErrorException;
 import reedSolomon.ReedSolomonException;
 
+/**
+ * This is the interface for all Forward Error Correction algorithms
+ * @author Simon Liu
+ *
+ */
 public interface FECInterface {
 	
 	/**

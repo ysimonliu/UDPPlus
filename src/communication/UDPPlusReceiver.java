@@ -12,7 +12,9 @@ import forwardErrorCorrectionException.NotAsciiCodeExpcetion;
 import forwardErrorCorrectionException.UndecodableException;
 import forwardErrorCorrectionException.UnlocatableErrorException;
 /**
- * The UDPPlusReceiver can receive messages from a UDPPlusTransmitter, decodes the message received, and return it as plain text
+ * The UDPPlusReceiver is a protocol based on UDP, but is capable of correcting errors occurred during transmission when decoding a message
+ * which was sent over by {@link UDPPlusTransmitter}
+ * 
  * @author Simon Liu
  *
  */
@@ -38,7 +40,7 @@ public class UDPPlusReceiver {
 	}
 	
 	/**
-	 * Receives a message from UDPPlusTransmitter
+	 * Receives a message from UDPPlusTransmitter, and decodes the message
 	 * @return
 	 * @throws IOException
 	 */

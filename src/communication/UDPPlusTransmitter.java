@@ -8,7 +8,9 @@ import java.net.SocketException;
 import forwardErrorCorrection.FECInterface;
 
 /**
- * The UDPPlusTransmitter is based on UDP, and can encode a message using one of the Forward Error Correction algorithm, and send to a UDPPlusReceiver
+ * The UDPPlusTransmitter is a protocol based on UDP, but is capable of encoding messages using the given FEC algorithms,
+ * which when an {@link UDPPlusReceiver} receives the message, will decode, and correct any errors occurred during transmission
+ * 
  * @author Simon Liu
  *
  */
@@ -37,7 +39,7 @@ public class UDPPlusTransmitter {
 	}
 	
 	/**
-	 * Sends out a message to the receiver
+	 * Sends out a message, an instance of UDPPlusReceiver should be receiving before this method is called
 	 * @param msg - the message to be sent over in plain text as a {@link String}}
 	 * @throws IOException
 	 */

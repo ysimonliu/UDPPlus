@@ -24,7 +24,7 @@ public class ReedSolomonImpl implements FECInterface {
 	private GenericGF genericGF;
 	
 	/**
-	 * Constructe an instance of ReedSolomonImpl with only the expected number of error bytes
+	 * Construct an instance of ReedSolomonImpl with only the expected number of error bytes
 	 * @param expectedECBits the number of bits that is expected to have an error
 	 */
 	public ReedSolomonImpl(int expectedECBits) {
@@ -35,7 +35,7 @@ public class ReedSolomonImpl implements FECInterface {
 	/**
 	 * 
 	 * @param expectedECBits the number of bits that is expected to have an error
-	 * @param genericGF - the specific Galois Field used for the Reed Solomon algorithm
+	 * @param genericGF - the specific Galois Field used for the Reed-Solomon algorithm
 	 */
 	public ReedSolomonImpl(int expectedECBits, GenericGF genericGF) {
 		this.expectedECBits = expectedECBits;
@@ -86,7 +86,7 @@ public class ReedSolomonImpl implements FECInterface {
 	 * @param intArray an array of decimal integers
 	 * @return
 	 */
-	public static String convertToBinaryCodeString(int[] intArray) {
+	static String convertToBinaryCodeString(int[] intArray) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < intArray.length; i++) {
 			String tmp = Integer.toBinaryString(intArray[i]);
@@ -104,7 +104,7 @@ public class ReedSolomonImpl implements FECInterface {
 	 * @param toDecode an array of ASCII codes
 	 * @return
 	 */
-	public String convertBytesToString(int[] toDecode) {
+	String convertBytesToString(int[] toDecode) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < toDecode.length - expectedECBits; i++) {
 			sb.append((char)toDecode[i]);
@@ -117,10 +117,10 @@ public class ReedSolomonImpl implements FECInterface {
 	 * where each 8 bits in the array are treated as binary code, so converted to the corresponding decimal number
 	 * @param intArrString the integer array consisting binary numbers
 	 * @return parsed corresponding ASCII codes
-	 * @throws NotAsciiCodeExpcetion {@link NotAsciiCodeExpcetion}}
-	 * @throws UndecodableException {@link UndecodableException}}
+	 * @throws NotAsciiCodeExpcetion
+	 * @throws UndecodableException
 	 */
-	public static int[] parseStringToIntArray(String intArrString) throws NotAsciiCodeExpcetion, UndecodableException {
+	 static int[] parseStringToIntArray(String intArrString) throws NotAsciiCodeExpcetion, UndecodableException {
 		if (intArrString.length() % 8 != 0) {
 			throw new UndecodableException("Encoded message is not correct");
 		}

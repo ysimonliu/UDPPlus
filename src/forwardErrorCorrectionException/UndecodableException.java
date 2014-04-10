@@ -1,7 +1,9 @@
 package forwardErrorCorrectionException;
 
 /**
- * This exception is raised when a string is not multiples of 8 and thus cannot be decoded into decimal integers which should correspond to ASCII codes
+ * This exception is raised when a string whose length is not multiples of 8 is passed to a decode method in {@link ReedSolomonImpl} 
+ * and thus cannot be decoded into decimal integers which should correspond to ASCII codes 
+ * 
  * @author Simon Liu
  *
  */
